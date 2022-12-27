@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+
+  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+
+  <title>Frontend Mentor | Expenses chart component</title>
+</head>
+<body>
+  <main>
+    <div class="header">
+      <div class="aside">
+        <p>My balance</p>
+        <p class="bold">$921.48</p>
+      </div>
+
+      <div class="image-wrapper">
+        <img src="./images/logo.svg" alt="logo image">
+      </div>
+    </div>
+    <div class="chart-container">
+      <h1>Spending - Last 7 days</h1>
+      <div class="chart" id="chart-wrapper">
+        <canvas id="chart"></canvas>
+      </div>
+      <div class="footer">
+        <div class="aside">
+          <p>Total this month</p>
+          <p class="bold big">$478.33</p>
+        </div>
+        <div class="aside bottom">
+          <p class="bold">+2.4%</p>
+          <p>from last month</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+  <script>
+    const ctx = document.getElementById('chart');
+    const chartWrapper = document.getElementById('chart-wrapper');
+
+    class Chart {
+      static OFFSET = 20;
+
+      constructor(canvas, width = 0, height = null) {
+        this.canvas = canvas;
+        this.canvas.width = width;
+        this.canvas.height = height;
+
+        this.loadData('./data.json')
+          .then(json => this.data = json);
+      }
+
+      async loadData(address) {
+        const data = await fetch(address);
+        const json = await data.json();
+
+        return json;
+      }
+
+      getWith() {
+        return this.canvas.width;
+      }
+
+      getHeight() {
+        return this.canvas.height;
+      }
+
+      setWidth(width) {
+        this.canvas.width = width;
+      }
+
+      setHeight(height) {
+        this.canvas.height = height;
+      }
+
+      generateBars(gapPx) {
+        this.bars = [];
+        let width = Math.round((this.getWith() - (this.data.length - 1) * gapPx) / this.data.length);
+        let maxValue = Math.max(...this.data.map(o => o.amount),0);
+        
+        for(let i = 0; i < this.data.length; i++) {
+          let  heightComparedToMaxValue = Math.round(this.data[i].amount / maxValue * this.getHeight());
+          this.bars.push(
+            new Bar(
+              i * (width + gapPx),
+              this.getHeight() - heightComparedToMaxValue + 60, //offset for value label on top of the bar
+              width,
+              heightComparedToMaxValue - Chart.OFFSET - 60,
+              "hsl(10, 79%, 65%)",
+              "hsl(10, 79%, 77%)",
+              this.data[i].day,
+              "$" + this.data[i].amount
+            )
+          )
+        }
+
+        this.bars[2].color = 'hsl(186, 34%, 60%)';
+        this.bars[2].hoverColor = 'hsl(186, 34%, 70%)';
+      }
+
+      getMousePosition(event) {
+        let rect = this.canvas.getBoundingClientRect();
+         
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+          lx: event.clientX - rect.left - event.movementX,
+          ly: event.clientY - rect.top - event.movementY,
+         }
+      }
+
+      isMouseOverElement(event) {
+        let mousePosition = this.getMousePosition(event);
+        
+        this.bars.forEach(bar => {
+          if(
+            mousePosition.x >= bar.posX && 
+            mousePosition.x <= (bar.posX + bar.width) &&
+            mousePosition.y >= bar.posY &&
+            mousePosition.y <= bar.posY + bar.height
+          ) {
+            bar.drawBar(this.canvas.getContext('2d'), bar.hoverColor);
+            bar.drawValue(this.canvas.getContext('2d'), this.getHeight());
+            this.canvas.style.cursor = 'pointer';
+          } else if (
+            mousePosition.lx >= bar.posX && 
+            mousePosition.lx <= (bar.posX + bar.width) &&
+            mousePosition.ly >= bar.posY &&
+            mousePosition.ly <= bar.posY + bar.height
+          ) {
+            bar.drawBar(this.canvas.getContext('2d'), bar.color);
+            this.canvas.getContext('2d').clearRect(bar.posX - 10, bar.posY - 60, bar.width + 20, 50);
+            this.canvas.style.cursor = 'inherit';
+          }
+        });
+      }
+    }
+
+    class Bar {
+      constructor(posX, posY, width, height, color, hoverColor, label, value) {
+        this.width = width;
+        this.height = height;
+        this.posX = posX;
+        this.posY = posY;
+        this.color = color;
+        this.hoverColor = hoverColor;
+        this.label = label;
+        this.value = value;
+      }
+
+      drawBar (context, color) {
+        context.fillStyle = color;
+        context.beginPath();
+        context.roundRect(this.posX, this.posY, this.width, this.height, 10);
+        context.fill();
+        this.drawLabel(context);
+      }
+
+      drawLabel (context, height) {
+        context.fillStyle = 'hsl(28, 10%, 53%)';
+        context.font = "1rem 'DM Sans'";
+        let offset = Math.round((this.width - context.measureText(this.label).width) / 2);
+        context.fillText(this.label, this.posX + offset, height, this.width);
+      }
+
+      drawValue(context, height) {
+        context.fillStyle = 'hsl(25, 47%, 15%)';
+        context.font = "1rem DM Sans";
+        
+        context.beginPath();
+        context.roundRect(this.posX-10, this.posY - 40, this.width+ 20, 30, 10);
+        context.fill();
+
+        let offset = Math.round((this.width - context.measureText(this.value).width) / 2);
+        context.fillStyle = 'hsl(27, 66%, 92%)';
+        context.fillText(this.value, this.posX + offset, this.posY - 20, this.width, 50);  
+      }
+    }
+
+    let chart = new Chart(ctx, chartWrapper.clientWidth, window.innerHeight * 0.30);
+
+    window.onload = function () {
+      chart.setWidth(chartWrapper.clientWidth);
+      
+      let ctx = chart.canvas.getContext('2d');
+      chart.generateBars(10);
+      chart.bars.forEach(bar => {
+        bar.drawBar(ctx, bar.color);
+        bar.drawLabel(ctx, chart.getHeight());
+      });
+    }
+
+    window.addEventListener("resize", (e) => {
+      chart.setWidth(chartWrapper.clientWidth);
+      
+      let ctx = chart.canvas.getContext('2d');
+      chart.generateBars(10);
+      chart.bars.forEach(bar => {
+        bar.drawBar(ctx, bar.color);
+        bar.drawLabel(ctx, chart.getHeight());
+      });
+    });
+
+    ctx.addEventListener('mousemove', (event) => {
+      chart.isMouseOverElement(event); 
+    })
+
+  </script>
+</body>
+</html>

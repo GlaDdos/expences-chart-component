@@ -1,0 +1,136 @@
+$soft-red: hsl(10, 79%, 65%);
+$cyan: hsl(186, 34%, 60%);
+$dark-brown: hsl(25, 47%, 15%);
+$medium-brown: hsl(28, 10%, 53%);
+$cream: hsl(27, 66%, 92%);
+$very-pale-orange: hsl(33, 100%, 98%);
+
+* {
+    font-family: 'DM Sans', sans-serif;
+
+    body {
+        display: flex;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+        background-color: $very-pale-orange;
+
+        main {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            margin: 0 1rem;
+            min-width: 375px;
+
+            .header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1.5rem 1.5rem;
+                border-radius: .8rem;
+                background-color: $soft-red;
+
+                p {
+                    margin: 0;
+                    color: $cream;
+
+                    &.bold {
+                        color: white;
+                        font-size: 1.5rem;
+                        font-weight: bold;
+                    }
+                }
+            }
+
+            .chart-container {
+                margin-top: 1rem;
+                background-color: white;
+                border-radius: .8rem;
+                padding: 1.5rem;
+
+                h1 {
+                    margin: 0;
+                    font-size: 1.5rem;
+                    color: $dark-brown;
+                }
+
+                .chart {
+                    padding-bottom: 1rem;
+                }
+
+                .footer {
+                    display: flex;
+                    padding-top: 1.5rem;
+                    justify-content: space-between;
+                    border-top: 2px solid $cream;
+
+                    .aside {
+
+                        &.bottom {
+                            align-self: flex-end;
+                            text-align: right;
+                        }
+                        p {
+                            margin: 0;
+                            color: $medium-brown;
+
+                            &.bold {
+                                font-weight: bold;
+                                color: $dark-brown;
+                            }
+
+                            &.big {
+                                font-size: 2rem;
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    * {
+        body {
+            main {
+                max-width: 540px;
+
+                .header {
+                    p {
+                        font-size: 1.1rem;
+                        margin-bottom: .5rem;
+                        &.bold {
+                            font-size: 2rem;
+                        }
+                    }
+
+                }
+
+                .chart-container {
+                    margin-top: 1.5rem;
+
+                    h1 {
+                        font-size: 2rem;
+                    }
+
+                    .footer {
+                        .aside {
+                            p {
+                                font-size: 1.2rem;
+                                &.big {
+                                    font-size: 3rem;
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

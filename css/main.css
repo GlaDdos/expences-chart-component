@@ -1,0 +1,95 @@
+* {
+  font-family: "DM Sans", sans-serif;
+}
+* body {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  background-color: hsl(33deg, 100%, 98%);
+}
+* body main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin: 0 1rem;
+  min-width: 375px;
+}
+* body main .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 1.5rem;
+  border-radius: 0.8rem;
+  background-color: hsl(10deg, 79%, 65%);
+}
+* body main .header p {
+  margin: 0;
+  color: hsl(27deg, 66%, 92%);
+}
+* body main .header p.bold {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+* body main .chart-container {
+  margin-top: 1rem;
+  background-color: white;
+  border-radius: 0.8rem;
+  padding: 1.5rem;
+}
+* body main .chart-container h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: hsl(25deg, 47%, 15%);
+}
+* body main .chart-container .chart {
+  padding-bottom: 1rem;
+}
+* body main .chart-container .footer {
+  display: flex;
+  padding-top: 1.5rem;
+  justify-content: space-between;
+  border-top: 2px solid hsl(27deg, 66%, 92%);
+}
+* body main .chart-container .footer .aside.bottom {
+  align-self: flex-end;
+  text-align: right;
+}
+* body main .chart-container .footer .aside p {
+  margin: 0;
+  color: hsl(28deg, 10%, 53%);
+}
+* body main .chart-container .footer .aside p.bold {
+  font-weight: bold;
+  color: hsl(25deg, 47%, 15%);
+}
+* body main .chart-container .footer .aside p.big {
+  font-size: 2rem;
+}
+
+@media (min-width: 768px) {
+  * body main {
+    max-width: 540px;
+  }
+  * body main .header p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+  * body main .header p.bold {
+    font-size: 2rem;
+  }
+  * body main .chart-container {
+    margin-top: 1.5rem;
+  }
+  * body main .chart-container h1 {
+    font-size: 2rem;
+  }
+  * body main .chart-container .footer .aside p {
+    font-size: 1.2rem;
+  }
+  * body main .chart-container .footer .aside p.big {
+    font-size: 3rem;
+  }
+}/*# sourceMappingURL=main.css.map */
