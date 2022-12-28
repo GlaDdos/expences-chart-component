@@ -80,21 +80,23 @@
 
       generateBars(gapPx) {
         this.bars = [];
-        let width = Math.round((this.getWith() - (this.data.length - 1) * gapPx) / this.data.length);
+        let width = Math.round((this.getWith() - 30 - (this.data.length - 1) * gapPx) / this.data.length);
         let maxValue = Math.max(...this.data.map(o => o.amount),0);
         
+        let availableHeight = this.getHeight() - Chart.OFFSET - 60;
+
         for(let i = 0; i < this.data.length; i++) {
-          let  heightComparedToMaxValue = Math.round(this.data[i].amount / maxValue * this.getHeight());
+          let barHeight = Math.round(this.data[i].amount / maxValue * availableHeight);
           this.bars.push(
             new Bar(
-              i * (width + gapPx),
-              this.getHeight() - heightComparedToMaxValue + 60, //offset for value label on top of the bar
+              i * (width + gapPx) + 15,
+              this.getHeight() - 20 - barHeight,
               width,
-              heightComparedToMaxValue - Chart.OFFSET - 60,
+              barHeight,
               "hsl(10, 79%, 65%)",
               "hsl(10, 79%, 77%)",
               this.data[i].day,
-              "$" + this.data[i].amount
+              "$ " + this.data[i].amount
             )
           )
         }
@@ -171,7 +173,7 @@
 
       drawValue(context, height) {
         context.fillStyle = 'hsl(25, 47%, 15%)';
-        context.font = "1rem DM Sans";
+        context.font = "1rem 'DM Sans'";
         
         //context.beginPath();
         //context.roundRect(this.posX-10, this.posY - 40, this.width+ 20, 30, 10);
