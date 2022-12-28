@@ -53,16 +53,13 @@
         this.canvas = canvas;
         this.canvas.width = width;
         this.canvas.height = height;
-
-        this.loadData('./data.json')
-          .then(json => this.data = json);
       }
 
       async loadData(address) {
         const data = await fetch(address);
         const json = await data.json();
 
-        return json;
+        this.data = json;
       }
 
       getWith() {
@@ -186,6 +183,8 @@
     }
 
     let chart = new Chart(ctx, chartWrapper.clientWidth, window.innerHeight * 0.30);
+    chart.loadData('./data.json')
+    .then();
 
     window.onload = function () {
       chart.setWidth(chartWrapper.clientWidth);
