@@ -182,13 +182,9 @@
       }
     }
 
-    let chart = new Chart(ctx, chartWrapper.clientWidth, window.innerHeight * 0.30);
-    chart.loadData('./data.json')
-    .then();
-
-    window.onload = function () {
-      chart.setWidth(chartWrapper.clientWidth);
-      
+    async function init(chart) {
+      await chart.loadData('./data.json');
+      chart.setWidth(chartWrapper.clientWidth); 
       let ctx = chart.canvas.getContext('2d');
       chart.generateBars(10);
       chart.bars.forEach(bar => {
@@ -196,6 +192,9 @@
         bar.drawLabel(ctx, chart.getHeight());
       });
     }
+
+    let chart = new Chart(ctx, chartWrapper.clientWidth, window.innerHeight * 0.30);
+    init(chart)
 
     window.addEventListener("resize", (e) => {
       chart.setWidth(chartWrapper.clientWidth);
