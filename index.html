@@ -43,7 +43,7 @@
     </div>
   </main>
   <script>
-    const ctx = document.getElementById('chart');
+    const context = document.getElementById('chart');
     const chartWrapper = document.getElementById('chart-wrapper');
 
     class Chart {
@@ -155,9 +155,10 @@
 
       drawBar (context, color) {
         context.fillStyle = color;
-        context.beginPath();
-        context.roundRect(this.posX, this.posY, this.width, this.height, 10);
-        context.fill();
+        // context.beginPath();
+        // context.roundRect(this.posX, this.posY, this.width, this.height, 10);
+        // context.fill();
+        this.roundRect(context, this.posX, this.posY, this.posX + this.width, this.posY + this.height, 10);
         this.drawLabel(context);
       }
 
@@ -172,42 +173,61 @@
         context.fillStyle = 'hsl(25, 47%, 15%)';
         context.font = "1rem DM Sans";
         
-        context.beginPath();
-        context.roundRect(this.posX-10, this.posY - 40, this.width+ 20, 30, 10);
+        //context.beginPath();
+        //context.roundRect(this.posX-10, this.posY - 40, this.width+ 20, 30, 10);
+        this.roundRect(context, this.posX-10, this.posY - 40, this.posX-10+ this.width+ 20, this.posY - 40 + 30, 10)
         context.fill();
 
         let offset = Math.round((this.width - context.measureText(this.value).width) / 2);
         context.fillStyle = 'hsl(27, 66%, 92%)';
         context.fillText(this.value, this.posX + offset, this.posY - 20, this.width, 50);  
       }
+
+      roundRect(context, x, y, w, h, r) {
+        var width = w - x;
+        var height = h - y;
+        if (r > width/2) r = width/2;
+        if (r > height/2) r = height/2;
+        context.beginPath();
+        context.moveTo(w - r, y);
+        context.quadraticCurveTo(w, y, w, y + r);
+        context.lineTo(w, h-r);
+        context.quadraticCurveTo(w, h, w - r, h);
+        context.lineTo(x + r, h);
+        context.quadraticCurveTo(x, h, x, h - r);
+        context.lineTo(x, y + r);
+        context.quadraticCurveTo(x, y, x + r, y);
+        context.closePath();
+        context.fill();
+      }
     }
 
     async function init(chart) {
       await chart.loadData('./data.json');
       chart.setWidth(chartWrapper.clientWidth); 
-      let ctx = chart.canvas.getContext('2d');
+      let context = chart.canvas.getContext('2d');
       chart.generateBars(10);
       chart.bars.forEach(bar => {
-        bar.drawBar(ctx, bar.color);
-        bar.drawLabel(ctx, chart.getHeight());
+        bar.drawBar(context, bar.color);
+        bar.drawLabel(context, chart.getHeight());
       });
     }
 
-    let chart = new Chart(ctx, chartWrapper.clientWidth, window.innerHeight * 0.30);
-    init(chart)
+    let chart = new Chart(context, chartWrapper.clientWidth, window.innerHeight * 0.30);
+    init(chart);
 
     window.addEventListener("resize", (e) => {
       chart.setWidth(chartWrapper.clientWidth);
       
-      let ctx = chart.canvas.getContext('2d');
+      let context = chart.canvas.getContext('2d');
       chart.generateBars(10);
       chart.bars.forEach(bar => {
-        bar.drawBar(ctx, bar.color);
-        bar.drawLabel(ctx, chart.getHeight());
+        bar.drawBar(context, bar.color);
+        bar.drawLabel(context, chart.getHeight());
       });
     });
 
-    ctx.addEventListener('mousemove', (event) => {
+    context.addEventListener('mousemove', (event) => {
       chart.isMouseOverElement(event); 
     })
 
